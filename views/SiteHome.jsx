@@ -2,6 +2,7 @@ import { Text, StyleSheet, View, StatusBar, Pressable } from 'react-native'
 import { useState, useEffect, React } from 'react'
 import { useNavigation } from '@react-navigation/native'
 import { encode } from 'base-64'
+export const IPV4_ADDRESS = '192.168.217.84'
 
 export const SiteHome = () => {
   const navigation = useNavigation()
@@ -18,9 +19,10 @@ export const SiteHome = () => {
     }
 
     const response = await fetch(
-      'http://192.168.217.132:8080/alfresco/api/-default-/public/authentication/versions/1/tickets',
+      `http://${IPV4_ADDRESS}:8080/alfresco/api/-default-/public/authentication/versions/1/tickets`,
       myheaders
     )
+    console.log(response)
     const data = await response.json()
     console.log(encode(data.entry.id))
 
@@ -37,7 +39,7 @@ export const SiteHome = () => {
     }
 
     const response = await fetch(
-      'http://192.168.217.132:8080/alfresco/api/-default-/public/alfresco/versions/1/sites',
+      `http://${IPV4_ADDRESS}:8080/alfresco/api/-default-/public/alfresco/versions/1/sites`,
       myheaders
     )
     const data = await response.json()
@@ -45,16 +47,17 @@ export const SiteHome = () => {
     setSites(data.list.entries)
   }
 
-  useEffect(() => {
+  useEffect(async () => {
     const fetchData = async () => {
       const ticket = await fetchTicket()
       await fetchSites(ticket)
     }
 
-    fetchData()
+    await fetchData()
   }, [])
   return (
     <View>
+
       {sites.map((value, index) => (
         <Pressable
           key={index}
